@@ -157,6 +157,7 @@ class Workspace(BaseModel):
             raise Exception("Project Not Found")
         
         if project.get("metadata",{}).get("modality") == "text": return TextProject(api_client=self.api_client, **project)
+        elif project.get("metadata",{}).get("modality") == "agent": return AgentProject(api_client=self.api_client, **project)
 
         return Project(api_client=self.api_client, **project)
 
