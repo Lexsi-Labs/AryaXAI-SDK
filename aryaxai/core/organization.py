@@ -212,6 +212,7 @@ class Organization(BaseModel):
         s3_config: Optional[S3Config] = None,
         gdrive_config: Optional[GDriveConfig] = None,
         sftp_config: Optional[SFTPConfig] = None,
+        hf_token: Optional[str] = None,
     ) -> str:
         """Create Data Connectors for project
 
@@ -359,6 +360,18 @@ class Organization(BaseModel):
                     "dropbox_json": {"code": code},
                 },
                 "link_service_type": data_connector_type,
+            }
+
+        if data_connector_type == "HuggingFace":
+            if not hf_token:
+                return "No hf_token provided"
+            
+            payload = {
+                "link_service":{
+                    "service_name": data_connector_name,
+                    "hf_token": hf_token
+                },
+                "link_service_type": data_connector_type
             }
 
         url = build_url(
