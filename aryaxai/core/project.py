@@ -2665,7 +2665,7 @@ class Project(BaseModel):
             map(lambda data: data["model_name"], res["details"]["available"])
         )
 
-        available_models.append(list(
+        available_models.extend(list(
             map(lambda data: data["model_name"], res["details"]["foundation_models"])
         ))
 
