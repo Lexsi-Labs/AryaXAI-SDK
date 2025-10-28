@@ -2665,6 +2665,10 @@ class Project(BaseModel):
             map(lambda data: data["model_name"], res["details"]["available"])
         )
 
+        available_models.append(list(
+            map(lambda data: data["model_name"], res["details"]["foundation_models"])
+        ))
+
         return available_models
 
     def activate_model(self, model_name: str) -> str:
