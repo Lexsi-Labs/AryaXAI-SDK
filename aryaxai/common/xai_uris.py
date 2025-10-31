@@ -49,7 +49,6 @@ GET_DATA_DRIFT_DIAGNOSIS_URI = f"{API_VERSION_V2}/project/get_data_drift_diagnos
 GET_PROJECT_CONFIG = f"{API_VERSION_V2}/users/get_xai_config"
 AVAILABLE_TAGS_URI = f"{API_VERSION_V2}/project/get_all_available_tags_info"
 TAG_DATA_URI = f"{API_VERSION_V2}/project/tag_data"
-INITIALIZE_TEXT_MODEL_URI = f"{API_VERSION_V2}/users/initalize_text_model"
 GET_FEATURE_IMPORTANCE_URI = f"{API_VERSION_V2}/project/get_feature_importance"
 
 # Monitoring
@@ -188,3 +187,5 @@ CONFIGURE_GUARDRAILS_URI = f"guardrails/configure"
 RUN_GUARDRAILS_URI=f"guardrails/run_guardrail"
 GET_AVAILABLE_TEXT_MODELS_URI = f"{API_VERSION_V2}/users/get_available_text_models"
 QUANTIZE_MODELS_URI = f"{API_VERSION_V2}/ai-models/run_quantization_on_model"
+INITIALIZE_TEXT_MODEL_URI = f"{API_VERSION_V2}/users/initalize_text_model"
+TEXT_MODEL_INFERENCE_SETTINGS_URI = f"{API_VERSION_V2}/ai-models/update_inference_settings"

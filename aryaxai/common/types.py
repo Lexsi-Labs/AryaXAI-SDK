@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional, TypedDict, Dict
 
 
@@ -81,3 +82,17 @@ class SFTPConfig(TypedDict):
     port: str
     username: str
     password: str
+
+class CustomServerConfig(TypedDict):
+    start: Optional[datetime] = None
+    stop: Optional[datetime] = None
+    shutdown_after: Optional[int] = 1
+    op_hours: Optional[bool] = None
+    auto_start: bool = False
+
+class InferenceCompute(TypedDict):
+    instance_type: str
+    custom_server_config: Optional[CustomServerConfig] = CustomServerConfig()
+
+class InferenceSettings(TypedDict):
+    inference_engine: str

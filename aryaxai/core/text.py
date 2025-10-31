@@ -1,6 +1,7 @@
 from datetime import datetime
 import io
-from typing import Optional
+from typing import Optional, TypedDict
+from aryaxai.common.types import InferenceCompute, InferenceSettings
 from aryaxai.common.utils import poll_events
 from aryaxai.common.xai_uris import (
     AVAILABLE_GUARDRAILS_URI,
@@ -13,6 +14,7 @@ from aryaxai.common.xai_uris import (
     MESSAGES_URI,
     QUANTIZE_MODELS_URI,
     SESSIONS_URI,
+    TEXT_MODEL_INFERENCE_SETTINGS_URI,
     TRACES_URI,
     UPDATE_GUARDRAILS_STATUS_URI,
     UPLOAD_DATA_FILE_URI,
@@ -166,7 +168,16 @@ class TextProject(Project):
 
         return res.get("details")
 
-    def initialize_text_model(self, model_provider: str, model_name: str, model_task_type:str, model_type: str, serverless_instance_type: Optional[str] = "gova-2", assets: Optional[dict] = None) -> str:
+    def initialize_text_model(
+        self, 
+        model_provider: str, 
+        model_name: str, 
+        model_task_type:str, 
+        model_type: str,  
+        inference_compute: InferenceCompute,
+        inference_settings: InferenceSettings,
+        assets: Optional[dict] = None,
+    ) -> str:
         """Initialize text model
 
         :param model_provider: model of provider
@@ -180,7 +191,8 @@ class TextProject(Project):
             "model_task_type": model_task_type,
             "project_name": self.project_name,
             "model_type": model_type,
-            "instance_type": serverless_instance_type
+            "inference_compute": inference_compute,
+            "inference_settings": inference_settings
         }
         if assets:
             payload["assets"] = assets
@@ -188,6 +200,30 @@ class TextProject(Project):
         if not res["success"]:
             raise Exception(res.get("details", "Model Initialization Failed"))
         poll_events(self.api_client, self.project_name, res["event_id"])
+
+    def model_inference_settings(
+        self,  
+        model_name: str,
+        inference_compute: InferenceCompute,
+        inference_settings: InferenceSettings,
+    ) -> str:
+        """Model Inference Settings
+
+        :param model_provider: model of provider
+        :param model_name: name of the model to be initialized
+        :param model_task_type: task type of model
+        :return: response
+        """
+        payload = {
+            "model_name": model_name,
+            "project_name": self.project_name,
+            "inference_compute": inference_compute,
+            "inference_settings": inference_settings
+        }
+
+        res = self.api_client.post(f"{TEXT_MODEL_INFERENCE_SETTINGS_URI}", payload)
+        if not res["success"]:
+            raise Exception(res.get("details", "Failed to update inference settings"))
 
     def generate_text_case(
         self,
