@@ -20,7 +20,6 @@ class Tracer:
     def __init__(self):
         self.base_url = os.getenv("XAI_API_URL", "https://apiv2.aryaxai.com")    
         self.endpoint = f"{self.base_url}"
-        self.endpoint = f"http://localhost:4317"
     def setup_langchain_tracing(self , project: object, session_id : str = None) -> None:
         """
         Sets up OpenTelemetry tracing for a given project with OTLP and console exporters.

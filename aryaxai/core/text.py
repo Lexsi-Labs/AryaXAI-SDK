@@ -20,7 +20,8 @@ import pandas as pd
 from aryaxai.core.wrapper import AryaModels, monitor
 import json
 import aiohttp
-from typing import AsyncIterator
+from typing import AsyncIterator, Iterator
+import requests
 
 
 class TextProject(Project):
@@ -237,7 +238,7 @@ class TextProject(Project):
             raise Exception(res.get("details"," Failed to fetch available text models"))
         return pd.DataFrame(res.get("details"))
     
-    async def chat_completion(
+    def chat_completion(
         self,
         model: str,
         messages: List[Dict[str, Any]],
@@ -245,7 +246,7 @@ class TextProject(Project):
         api_key: str,
         max_tokens: Optional[int] = None,
         stream: Optional[bool] = False,
-    ) -> Union[dict, AsyncIterator[str]]:
+    ) -> Union[dict, Iterator[str]]:
         """Chat completion endpoint wrapper
 
         :param model: name of the model
@@ -269,22 +270,21 @@ class TextProject(Project):
         if not stream:
             return self.api_client.post(RUN_CHAT_COMPLETION, payload=payload)
         
-        async def stream_response() -> AsyncIterator[str]:
+        def stream_response() -> Iterator[str]:
             url = f"{self.api_client.base_url}/{RUN_CHAT_COMPLETION}"
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, json=payload) as response:
-                    async for line in response.content:
-                        if line:
-                            decoded_line = line.decode('utf-8')
-                            if decoded_line.startswith('data: '):
-                                if decoded_line.strip() == 'data: [DONE]':
-                                    break
-                                chunk_data = json.loads(decoded_line[6:])
-                                yield chunk_data
+            with requests.post(url, json=payload, stream=True) as response:
+                for line in response.iter_lines():
+                    if line:
+                        decoded_line = line.decode('utf-8')
+                        if decoded_line.startswith('data: '):
+                            if decoded_line.strip() == 'data: [DONE]':
+                                break
+                            chunk_data = json.loads(decoded_line[6:])
+                            yield chunk_data
 
         return stream_response()
 
-    async def image_generation(
+    def image_generation(
         self,
         model: str,
         prompt: str,
