@@ -238,19 +238,19 @@ class TextProject(Project):
         self,
         model: str,
         messages: List[Dict[str, Any]],
-        x_provider: str,
+        provider: str,
         api_key: str,
-        max_tokens: Optional[int] = 1024,
+        max_tokens: Optional[int] = None,
         stream: Optional[bool] = False,
     ) -> dict:
         """Chat completion endpoint wrapper
 
         :param model: name of the model
         :param messages: list of chat messages
+        :param provider: model provider (e.g., "openai", "anthropic")
+        :param api_key: API key for the provider
         :param max_tokens: maximum tokens to generate
         :param stream: whether to stream the response
-        :param x_provider: provider header
-        :param api_key: API key header
         :return: chat completion response
         """
         payload = {
@@ -258,52 +258,37 @@ class TextProject(Project):
             "messages": messages,
             "max_tokens": max_tokens,
             "stream": stream,
-            "project_name": self.project_name
+            "project_name": self.project_name,
+            "provider": provider,
+            "api_key": api_key
         }
-        
-        headers = {}
-        if x_provider:
-            headers["x-provider"] = x_provider
-        if api_key:
-            headers["api_key"] = api_key
-
-        res = self.api_client.post(RUN_CHAT_COMPLETION, payload=payload, headers=headers)
-        if not res["success"]:
-            raise Exception(res.get("details", "Chat completion failed"))
-            
-        return res.get("details")
+        print(RUN_CHAT_COMPLETION)
+        res = self.api_client.post(RUN_CHAT_COMPLETION, payload=payload) 
+        return res
     
     async def image_generation(
         self,
         model: str,
         prompt: str,
-        x_provider: str,
+        provider: str,
         api_key: str,
     ) -> dict:
-        """Chat completion endpoint wrapper
+        """Image generation endpoint wrapper
 
         :param model: name of the model
-        :param messages: list of chat messages
-        :param max_tokens: maximum tokens to generate
-        :param stream: whether to stream the response
-        :param x_provider: provider header
-        :param api_key: API key header
-        :return: chat completion response
+        :param prompt: image generation prompt
+        :param provider: model provider (e.g., "openai", "stability")
+        :param api_key: API key for the provider
+        :return: image generation response
         """
         payload = {
             "model": model,
-            "prompt" : prompt,
-            "project_name": self.project_name
+            "prompt": prompt,
+            "project_name": self.project_name,
+            "provider": provider,
+            "api_key": api_key
         }
-        
-        headers = {}
-        if x_provider:
-            headers["x-provider"] = x_provider
-        if api_key:
-            headers["api_key"] = api_key
 
-        res = self.api_client.post(RUN_IMAGE_GENERATION, payload=payload, headers=headers)
-        if not res["success"]:
-            raise Exception(res.get("details", "Chat completion failed"))
+        res = self.api_client.post(RUN_IMAGE_GENERATION, payload=payload)
             
         return res
