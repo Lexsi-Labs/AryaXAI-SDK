@@ -262,7 +262,6 @@ class TextProject(Project):
             "provider": provider,
             "api_key": api_key
         }
-        print(RUN_CHAT_COMPLETION)
         res = self.api_client.post(RUN_CHAT_COMPLETION, payload=payload) 
         return res
     
