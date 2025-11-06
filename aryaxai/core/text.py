@@ -22,7 +22,7 @@ import json
 import aiohttp
 from typing import AsyncIterator, Iterator
 import requests
-
+from uuid import UUID
 
 class TextProject(Project):
     """Project for text modality
@@ -244,6 +244,7 @@ class TextProject(Project):
         messages: List[Dict[str, Any]],
         provider: str,
         api_key: str,
+        session_id : Optional[UUID] = None,
         max_tokens: Optional[int] = None,
         stream: Optional[bool] = False,
     ) -> Union[dict, Iterator[str]]:
@@ -264,7 +265,8 @@ class TextProject(Project):
             "stream": stream,
             "project_name": self.project_name,
             "provider": provider,
-            "api_key": api_key
+            "api_key": api_key,
+            "session_id" : session_id
         }
 
         if not stream:
@@ -290,6 +292,7 @@ class TextProject(Project):
         prompt: str,
         provider: str,
         api_key: str,
+        session_id : Optional[UUID] = None,
     ) -> dict:
         """Image generation endpoint wrapper
 
@@ -304,7 +307,8 @@ class TextProject(Project):
             "prompt": prompt,
             "project_name": self.project_name,
             "provider": provider,
-            "api_key": api_key
+            "api_key": api_key,
+            "session_id" : session_id
         }
 
         res = self.api_client.post(RUN_IMAGE_GENERATION, payload=payload)
