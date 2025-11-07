@@ -3,6 +3,7 @@ from typing import List, Optional, TypedDict, Dict
 
 class ProjectConfig(TypedDict):
     project_type: str
+    model_name: Optional[str] = None
     unique_identifier: str
     true_label: str
     tag: str

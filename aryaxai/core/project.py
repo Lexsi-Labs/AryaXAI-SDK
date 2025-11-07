@@ -722,6 +722,8 @@ class Project(BaseModel):
                         ),
                     },
                 }
+                if config.get("model_name"):
+                    payload["metadata"]["model_name"] = config.get("model_name")
 
             res = self.api_client.post(UPLOAD_DATA_WITH_CHECK_URI, payload)
 
@@ -2664,6 +2666,10 @@ class Project(BaseModel):
         available_models = list(
             map(lambda data: data["model_name"], res["details"]["available"])
         )
+
+        available_models.extend(list(
+            map(lambda data: data["model_name"], res["details"]["foundation_models"])
+        ))
 
         return available_models
 
