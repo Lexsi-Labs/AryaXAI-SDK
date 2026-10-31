@@ -360,7 +360,7 @@ class Wrapper:
                 elif method_name == "client.generate_text_case":  # AryaModels
                     output_data = result.get("details", {}).get("result", {}).get("output")
                 elif method_name == "client.run":   # Replicate
-                    output_data == result
+                    output_data = result
                 elif method_name == "client.chat.completions.create" or "client.chat_completion":  # OpenAI
                     output_data = result.choices[0].message.content
                 else:
@@ -553,7 +553,7 @@ def monitor(project, client, session_id=None):
     elif isinstance(client, replicate.Client) or client is replicate:        
         client.run = wrapper._get_wrapper(
             original_method=client.run,
-            method_name="run",
+            method_name="client.run",
             session_id=session_id,
             provider="Replicate"
         )
