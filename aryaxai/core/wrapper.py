@@ -8,7 +8,10 @@ import botocore.client
 from openai import OpenAI
 from anthropic import Anthropic
 from google import genai
-from mistralai import Mistral
+try:
+    from mistralai import Mistral
+except ImportError:  # mistralai >= 2 moved the client
+    from mistralai.client import Mistral
 from pydantic import BaseModel
 
 import requests
