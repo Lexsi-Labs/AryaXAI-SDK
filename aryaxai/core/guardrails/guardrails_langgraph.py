@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union
+import langchain_core.runnables.config  # noqa: F401  get_current_span() raises without it
 from aryaxai.common.xai_uris import (
     RUN_GUARDRAILS_URI,
     RUN_GUARDRAILS_PARALLEL_URI
@@ -180,7 +181,8 @@ class LangGraphGuardrail:
         current_content = content_to_process
         
         try:
-            parent_span = get_current_span()
+            # get_current_span() is None without LangChain tracing, the checks still have to run
+            parent_span = get_current_span() or trace.get_current_span()
             if parent_span is not None:
                 ctx = trace.set_span_in_context(parent_span)
                 # Create parent span for input/output guardrails with node name for better tracing
@@ -237,6 +239,8 @@ class LangGraphGuardrail:
             else:
                 return current_content
                 
+        except ValueError:
+            raise  # block signal for the wrapper
         except Exception as e:
             return content
 
