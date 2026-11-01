@@ -43,7 +43,11 @@ def pretty_date(date: str) -> str:
         try:
             datetime_obj = datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f")
         except ValueError:
-            print("Date format invalid.")
+            try:
+                datetime_obj = datetime.fromisoformat(date)
+            except ValueError:
+                print("Date format invalid.")
+                return date
 
     return datetime_obj.strftime("%d-%m-%Y %H:%M:%S")
 
